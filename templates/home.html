@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+
+<form>
+    <select name='cityselect'>
+        {% for city in cities %}
+            <option value="{{ city.id }}">{{ city.name }}</option>
+        {% endfor %}
+    </select>
+</form>
+<input id="submitButton" type="button" value="Click To Submit"/>
+
+<div id="hotels">
+
+</div>
+
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+<script>
+
+$(function() {
+    $('#submitButton').click(function() {
+        var valuesArray = $('select[name=cityselect]').val()
+        $.ajax({
+            type: 'POST',
+            url: '{% url 'home' %}',
+            data: { cityselect: valuesArray, 'csrfmiddlewaretoken': '{{ csrf_token }}' }
+        }).done(function(msg) {
+        $('#hotels').empty();
+        quantity = msg['hotels'].length;
+        var i;
+        for (i = 0; i < quantity; i++) {
+            element = (
+                "<h4>" + msg['hotels'][i].name + "</h4>"+
+                "<h6>" + msg['hotels'][i].price + "</h6>"+
+                "<img src=" + "/static/" + msg['hotels'][i].image + ">"
+            )
+            $('#hotels').append(element);
+        }
+        });
+    });
+});
+
+</script>
+
+</body>
+</html>
