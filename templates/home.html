@@ -2,24 +2,37 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Home</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
 </head>
-<body>
+<body class="text-center">
 
 
 <form>
-    <select name='cityselect'>
+    <div class="form-group">
+    <label for="cityselect">Выберите город</label>
+    <select class='form-control' name='cityselect'>
         {% for city in cities %}
             <option value="{{ city.id }}">{{ city.name }}</option>
         {% endfor %}
     </select>
 </form>
-<input id="submitButton" type="button" value="Click To Submit"/>
+<input id="submitButton" type="button" class="btn btn-primary" value="Click To Submit"/>
 
-<div id="hotels">
 
+
+
+<div class="album py-5 bg-light">
+    <div class="container">
+        <div class="row" id="hotels">
+
+
+
+
+
+        </div>
+    </div>
 </div>
-
 
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
@@ -39,9 +52,15 @@ $(function() {
         var i;
         for (i = 0; i < quantity; i++) {
             element = (
-                "<h4>" + msg['hotels'][i].name + "</h4>"+
-                "<h6>" + msg['hotels'][i].price + "</h6>"+
-                "<img src=" + "/static/" + msg['hotels'][i].image + ">"
+                '<div class="col-md-4">'+
+                    '<div class="card mb-4 shadow-sm">'+
+                        '<img class="card-img-top" src="' + msg['hotels'][i].image + '" alt="Card image cap">'+
+                        '<div class="card-body">'+
+                            '<p class="card-text">' + msg['hotels'][i].name + '</p>'+
+                            '<p class="card-text">' + msg['hotels'][i].price + '</p>'+
+                        '</div>'+
+                    '</div>'+
+                '</div>'
             )
             $('#hotels').append(element);
         }
