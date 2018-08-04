@@ -15,6 +15,6 @@ def home(request):
     if request.method == 'POST':
 
         hotels = Hotel.objects.filter(city=request.POST.get('cityselect')).values()
-        print(hotels)
+        print(hotels.query)
         #pdb.set_trace()
         return JsonResponse({'hotels': list(hotels)})
