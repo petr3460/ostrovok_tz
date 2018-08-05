@@ -5,6 +5,8 @@
     <title>Home</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
 </head>
+
+
 <body class="text-center">
 
 
@@ -23,14 +25,12 @@
 
 
 <div class="album py-5 bg-light">
-    <div class="container">
+    <div class="container" id="container">
         <div class="row" id="hotels">
 
 
-
-
-
         </div>
+        <input id="ShowMoreButton" style="display: none;" type="button" class="btn btn-primary" value="Показать еще"/>
     </div>
 </div>
 
@@ -38,35 +38,60 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 
 <script>
+var count_request = 0;
+var valuesArray = '';
 
-$(function() {
-    $('#submitButton').click(function() {
-        var valuesArray = $('select[name=cityselect]').val()
-        $.ajax({
-            type: 'POST',
-            url: '{% url 'home' %}',
-            data: { cityselect: valuesArray, 'csrfmiddlewaretoken': '{{ csrf_token }}' }
-        }).done(function(msg) {
-        $('#hotels').empty();
-        quantity = msg['hotels'].length;
-        var i;
-        for (i = 0; i < quantity; i++) {
-            element = (
-                '<div class="col-md-4">'+
-                    '<div class="card mb-4 shadow-sm">'+
-                        '<img class="card-img-top" src="' + msg['hotels'][i].image + '" alt="Card image cap">'+
-                        '<div class="card-body">'+
-                            '<p class="card-text">' + msg['hotels'][i].name + '</p>'+
-                            '<p class="card-text">' + msg['hotels'][i].price + '</p>'+
-                        '</div>'+
-                    '</div>'+
-                '</div>'
-            )
-            $('#hotels').append(element);
-        }
-        });
+$('#submitButton').click(function() {
+    valuesArray = $('select[name=cityselect]').val();
+    count_request = 0;
+    $.ajax({
+        type: 'POST',
+        url: '{% url 'home' %}',
+        data: { cityselect: valuesArray, 'csrfmiddlewaretoken': '{{ csrf_token }}' }
+    }).done(function(msg) {
+    $('#hotels').empty();
+    add_hotels(msg);
+    if (msg['show_button'] == 1){
+        $('#ShowMoreButton').show();
+        };
     });
 });
+
+
+$('#ShowMoreButton').click(function() {
+    $.ajax({
+        type: 'POST',
+        url: '{% url 'home' %}',
+        data: { cityselect: valuesArray, count: count_request, 'csrfmiddlewaretoken': '{{ csrf_token }}' }
+    }).done(function(msg) {
+        add_hotels(msg);
+        if (msg['show_button'] == 0){
+            $('#ShowMoreButton').hide();
+        };
+    });
+});
+
+
+function add_hotels(msg){
+    quantity = msg['hotels'].length;
+    var i;
+    for (i = 0; i < quantity; i++) {
+        element = (
+            '<div class="col-md-4">'+
+                '<div class="card mb-4 shadow-sm">'+
+                    '<img class="card-img-top" src="' + msg['hotels'][i].image + '" alt="Card image cap">'+
+                    '<div class="card-body">'+
+                        '<p class="card-text">' + msg['hotels'][i].name + '</p>'+
+                        '<p class="card-text">' + msg['hotels'][i].price + '</p>'+
+                    '</div>'+
+                '</div>'+
+            '</div>'
+        )
+        $('#hotels').append(element);
+        count_request++;
+    }
+}
+
 
 </script>
 
